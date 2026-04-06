@@ -37,18 +37,23 @@ function parseDataTable(xmlStr: string): any[] {
   if (!xmlStr) return [];
   try {
     const rows: any[] = [];
-    const rowMatches = xmlStr.match(/<Table[\s\S]*?<\/Table>/g) || [];
+    const rowMatches = xmlStr.match(/<WAYBILL>([\s\S]*?)<\/WAYBILL>/g) || [];
     for (const row of rowMatches) {
       const obj: any = {};
-      const fields = row.match(/<(\w+)>([\s\S]*?)<\/\1>/g) || [];
+      const inner = row.replace(/<\/?WAYBILL>/g, "");
+      const fields = inner.match(/<([A-Z_]+)>([^<]*)<\/\1>/g) || [];
       for (const field of fields) {
-        const match = field.match(/<(\w+)>([\s\S]*?)<\/\1>/);
+        const match = field.match(/<([A-Z_]+)>([^<]*)<\/\1>/);
         if (match) obj[match[1]] = match[2];
       }
       if (Object.keys(obj).length > 0) rows.push(obj);
     }
+    console.log("Parsed rows:", rows.length, Object.keys(rows[0] || {}));
     return rows;
-  } catch { return []; }
+  } catch (e) {
+    console.log("Parse error:", e);
+    return [];
+  }
 }
 
 // ========== EAPI helper ==========
@@ -212,8 +217,26 @@ app.post("/api/waybill/detail", async (req: any, res: any) => {
         <w_id>${waybillId}</w_id>
       </get_waybill_goods_list>`);
 
+    console.log("Goods XML:", xmlG?.substring(0, 500));
+    console.log("waybillId:", waybillId);
+
     const goodsXml = xmlG.match(/<get_waybill_goods_listResult>(.*?)<\/get_waybill_goods_listResult>/s)?.[1] || "";
-    const goods = parseDataTable(goodsXml);
+    
+    // Custom parser for goods
+    const goodsMatches = goodsXml?.match(/<GOODS>([\s\S]*?)<\/GOODS>/g) 
+      || goodsXml?.match(/<Table>([\s\S]*?)<\/Table>/g) 
+      || [];
+
+    const goods = goodsMatches.map(row => {
+      const obj: any = {};
+      const inner = row.replace(/<\/?(GOODS|Table)>/g, "");
+      const fields = inner.match(/<([A-Z_]+)>([^<]*)<\/\1>/g) || [];
+      for (const field of fields) {
+        const match = field.match(/<([A-Z_]+)>([^<]*)<\/\1>/);
+        if (match) obj[match[1]] = match[2];
+      }
+      return obj;
+    });
 
     res.json({
       waybill: waybillRows[0] || {},
