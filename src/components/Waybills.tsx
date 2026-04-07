@@ -75,13 +75,17 @@ export default function Waybills({ su, sp }: WaybillsProps) {
   const fetchWaybills = async (page: number = 0) => {
     setLoading(true);
     try {
+      let type = 0;
+      if (currentTab === "tab_given") type = 1;
+      if (currentTab === "tab_received") type = 2;
+
       const response = await fetch("/api/waybills", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           su, 
           sp, 
-          currentTab, 
+          type, 
           startDate, 
           endDate, 
           filterExpression: filterText,

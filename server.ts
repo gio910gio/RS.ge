@@ -163,9 +163,17 @@ app.post("/api/check-user", async (req: any, res: any) => {
   }
 });
 
+// თარიღის ფორმატის კონვერტაცია: 2026-03-08 → 08.03.2026
+function formatDateForRS(dateStr: string): string {
+  if (!dateStr) return "";
+  const [y, m, d] = dateStr.split("-");
+  if (!y || !m || !d) return dateStr;
+  return `${d}.${m}.${y}`;
+}
+
 // ========== ზედნადებების სია ==========
 app.post("/api/waybills", async (req: any, res: any) => {
-  const { su, sp, startDate, endDate, startRowIndex } = req.body;
+  const { su, sp, startDate, endDate, startRowIndex, type } = req.body;
   if (!su || !sp) return res.status(400).json({ error: "su და sp სავალდებულოა" });
 
   try {
@@ -173,10 +181,11 @@ app.post("/api/waybills", async (req: any, res: any) => {
       <get_waybills_ex xmlns="http://tempuri.org/">
         <su>${su}</su>
         <sp>${sp}</sp>
-        <beginDate>${startDate || ""}</beginDate>
-        <endDate>${endDate || ""}</endDate>
+        <beginDate>${formatDateForRS(startDate)}</beginDate>
+        <endDate>${formatDateForRS(endDate)}</endDate>
         <rowsFrom>${startRowIndex || 0}</rowsFrom>
         <rowsCount>300</rowsCount>
+        <type>${type || 0}</type>
       </get_waybills_ex>`);
 
     const xmlResult = xml.match(/<get_waybills_exResult>(.*?)<\/get_waybills_exResult>/s)?.[1] || "";
