@@ -176,7 +176,7 @@ app.post("/api/waybills", async (req: any, res: any) => {
         <beginDate>${startDate || ""}</beginDate>
         <endDate>${endDate || ""}</endDate>
         <rowsFrom>${startRowIndex || 0}</rowsFrom>
-        <rowsCount>40</rowsCount>
+        <rowsCount>300</rowsCount>
       </get_waybills_ex>`);
 
     const xmlResult = xml.match(/<get_waybills_exResult>(.*?)<\/get_waybills_exResult>/s)?.[1] || "";

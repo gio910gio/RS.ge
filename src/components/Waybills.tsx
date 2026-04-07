@@ -85,7 +85,7 @@ export default function Waybills({ su, sp }: WaybillsProps) {
           startDate, 
           endDate, 
           filterExpression: filterText,
-          startRowIndex: page * 40 
+          startRowIndex: page * 300 
         })
       });
       const data = await response.json();
@@ -313,10 +313,10 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <span className="text-sm font-bold text-slate-300 px-4">
-                  {currentPage + 1} / {Math.ceil(totalCount / 40) || 1}
+                  {currentPage + 1} / {Math.ceil(totalCount / 300) || 1}
                 </span>
                 <button 
-                  disabled={(currentPage + 1) * 40 >= totalCount || loading}
+                  disabled={(currentPage + 1) * 300 >= totalCount || loading}
                   onClick={() => setCurrentPage(prev => prev + 1)}
                   className="p-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 rounded-lg border border-slate-700 transition-all"
                 >
