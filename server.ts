@@ -165,7 +165,7 @@ app.post("/api/check-user", async (req: any, res: any) => {
 
 // ========== ზედნადებების სია ==========
 app.post("/api/waybills", async (req: any, res: any) => {
-  const { su, sp, startDate, endDate, startRowIndex, type } = req.body;
+  const { su, sp, startDate, endDate, startRowIndex, type, statuses, carNumber, waybillNumber } = req.body;
   if (!su || !sp) return res.status(400).json({ error: "su და sp სავალდებულოა" });
 
   try {
@@ -175,8 +175,8 @@ app.post("/api/waybills", async (req: any, res: any) => {
         <sp>${sp}</sp>
         <itypes>${type || ""}</itypes>
         <buyer_tin></buyer_tin>
-        <statuses></statuses>
-        <car_number></car_number>
+        <statuses>${statuses || ""}</statuses>
+        <car_number>${carNumber || ""}</car_number>
         <begin_date_s>${startDate ? startDate + "T00:00:00" : ""}</begin_date_s>
         <begin_date_e>${endDate ? endDate + "T23:59:59" : ""}</begin_date_e>
         <create_date_s xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
@@ -185,7 +185,7 @@ app.post("/api/waybills", async (req: any, res: any) => {
         <delivery_date_s xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
         <delivery_date_e xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
         <full_amount xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-        <waybill_number></waybill_number>
+        <waybill_number>${waybillNumber || ""}</waybill_number>
         <close_date_s xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
         <close_date_e xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
         <s_user_ids></s_user_ids>

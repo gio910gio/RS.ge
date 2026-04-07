@@ -54,7 +54,8 @@ export default function Waybills({ su, sp }: WaybillsProps) {
   const [loading, setLoading] = useState(false);
   const [waybills, setWaybills] = useState<Waybill[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
   const [currentTab, setCurrentTab] = useState("tab_given");
   const today = new Date();
   const thirtyDaysAgo = new Date();
@@ -62,9 +63,28 @@ export default function Waybills({ su, sp }: WaybillsProps) {
 
   const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
-  const [startDate, setStartDate] = useState(formatDate(thirtyDaysAgo));
-  const [endDate, setEndDate] = useState(formatDate(today));
+  const [startDate, setStartDate] = useState({
+    day: String(thirtyDaysAgo.getDate()).padStart(2, '0'),
+    month: String(thirtyDaysAgo.getMonth() + 1).padStart(2, '0'),
+    year: String(thirtyDaysAgo.getFullYear())
+  });
+
+  const [endDate, setEndDate] = useState({
+    day: String(today.getDate()).padStart(2, '0'),
+    month: String(today.getMonth() + 1).padStart(2, '0'),
+    year: String(today.getFullYear())
+  });
+
   const [filterText, setFilterText] = useState("");
+  
+  const [filters, setFilters] = useState({
+    status: '',
+    carNumber: '',
+    organization: '',
+    waybillNumber: '',
+    tin: '',
+    amount: ''
+  });
 
   const [selectedWaybill, setSelectedWaybill] = useState<Waybill | null>(null);
   const [waybillDetail, setWaybillDetail] = useState<WaybillDetail | null>(null);
@@ -79,6 +99,9 @@ export default function Waybills({ su, sp }: WaybillsProps) {
       if (currentTab === "tab_given") type = 1;
       if (currentTab === "tab_received") type = 2;
 
+      const startStr = `${startDate.year}-${startDate.month}-${startDate.day}`;
+      const endStr = `${endDate.year}-${endDate.month}-${endDate.day}`;
+
       const response = await fetch("/api/waybills", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -86,8 +109,11 @@ export default function Waybills({ su, sp }: WaybillsProps) {
           su, 
           sp, 
           type, 
-          startDate, 
-          endDate, 
+          startDate: startStr, 
+          endDate: endStr, 
+          statuses: filters.status,
+          carNumber: filters.carNumber,
+          waybillNumber: filters.waybillNumber,
           filterExpression: filterText,
           startRowIndex: page * 300 
         })
@@ -126,14 +152,55 @@ export default function Waybills({ su, sp }: WaybillsProps) {
   };
 
   useEffect(() => {
-    fetchWaybills(currentPage);
-  }, [currentTab, currentPage]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCurrentPage(0);
     fetchWaybills(0);
+  }, [currentTab, startDate.day, startDate.month, startDate.year, endDate.day, endDate.month, endDate.year]);
+
+  const filteredWaybills = waybills.filter(wb => {
+    // Organization filter (Frontend)
+    if (filters.organization && !(wb.BUYER_NAME || "").toLowerCase().includes(filters.organization.toLowerCase())) {
+      return false;
+    }
+    
+    // TIN filter (Frontend)
+    if (filters.tin && !(wb.BUYER_TIN || "").toLowerCase().includes(filters.tin.toLowerCase())) {
+      return false;
+    }
+
+    // Waybill Number filter (Frontend - in case backend filter is not enough or for instant feedback)
+    if (filters.waybillNumber && !(wb.WAYBILL_NUMBER || String(wb.ID)).toLowerCase().includes(filters.waybillNumber.toLowerCase())) {
+      return false;
+    }
+
+    // Car Number filter (Frontend)
+    if (filters.carNumber && !(wb.CAR_NUMBER || "").toLowerCase().includes(filters.carNumber.toLowerCase())) {
+      return false;
+    }
+
+    // Status filter (Frontend)
+    if (filters.status && String(wb.STATUS) !== filters.status) {
+      return false;
+    }
+    
+    // Amount filter (Frontend)
+    if (filters.amount) {
+      const amount = Number(wb.FULL_AMOUNT || 0);
+      if (amount < Number(filters.amount)) return false;
+    }
+
+    return true;
+  });
+
+  const calculateTotal = () => {
+    return filteredWaybills.reduce((sum, item) => {
+      return sum + parseFloat(String(item.FULL_AMOUNT || 0));
+    }, 0).toFixed(2);
   };
+
+  const totalPages = Math.ceil(filteredWaybills.length / itemsPerPage);
+  const paginatedWaybills = filteredWaybills.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const getStatusColor = (status: any) => {
     const s = String(status || "");
@@ -190,42 +257,100 @@ export default function Waybills({ su, sp }: WaybillsProps) {
               ))}
             </div>
 
-            <form onSubmit={handleSearch} className="flex flex-wrap gap-3">
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                <input 
-                  type="date" 
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="bg-slate-900 border border-slate-800 rounded-xl py-2 pl-10 pr-4 text-sm text-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
-                />
+            <div className="flex flex-wrap gap-3">
+              {/* თარიღის დიაპაზონი */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">თარიღიდან:</label>
+                  <div className="flex items-center gap-1">
+                    <select 
+                      value={startDate.day} 
+                      onChange={(e) => setStartDate({...startDate, day: e.target.value})}
+                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    >
+                      {Array.from({length: 31}, (_, i) => {
+                        const d = String(i + 1).padStart(2, '0');
+                        return <option key={d} value={d}>{d}</option>
+                      })}
+                    </select>
+                    <select 
+                      value={startDate.month} 
+                      onChange={(e) => setStartDate({...startDate, month: e.target.value})}
+                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    >
+                      <option value="01">იანვარი</option>
+                      <option value="02">თებერვალი</option>
+                      <option value="03">მარტი</option>
+                      <option value="04">აპრილი</option>
+                      <option value="05">მაისი</option>
+                      <option value="06">ივნისი</option>
+                      <option value="07">ივლისი</option>
+                      <option value="08">აგვისტო</option>
+                      <option value="09">სექტემბერი</option>
+                      <option value="10">ოქტომბერი</option>
+                      <option value="11">ნოემბერი</option>
+                      <option value="12">დეკემბერი</option>
+                    </select>
+                    <select 
+                      value={startDate.year} 
+                      onChange={(e) => setStartDate({...startDate, year: e.target.value})}
+                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    >
+                      {Array.from({length: 10}, (_, i) => {
+                        const year = String(new Date().getFullYear() - i);
+                        return <option key={year} value={year}>{year}</option>
+                      })}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="w-px h-8 bg-slate-800 hidden sm:block mx-2" />
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">თარიღამდე:</label>
+                  <div className="flex items-center gap-1">
+                    <select 
+                      value={endDate.day} 
+                      onChange={(e) => setEndDate({...endDate, day: e.target.value})}
+                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    >
+                      {Array.from({length: 31}, (_, i) => {
+                        const d = String(i + 1).padStart(2, '0');
+                        return <option key={d} value={d}>{d}</option>
+                      })}
+                    </select>
+                    <select 
+                      value={endDate.month} 
+                      onChange={(e) => setEndDate({...endDate, month: e.target.value})}
+                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    >
+                      <option value="01">იანვარი</option>
+                      <option value="02">თებერვალი</option>
+                      <option value="03">მარტი</option>
+                      <option value="04">აპრილი</option>
+                      <option value="05">მაისი</option>
+                      <option value="06">ივნისი</option>
+                      <option value="07">ივლისი</option>
+                      <option value="08">აგვისტო</option>
+                      <option value="09">სექტემბერი</option>
+                      <option value="10">ოქტომბერი</option>
+                      <option value="11">ნოემბერი</option>
+                      <option value="12">დეკემბერი</option>
+                    </select>
+                    <select 
+                      value={endDate.year} 
+                      onChange={(e) => setEndDate({...endDate, year: e.target.value})}
+                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    >
+                      {Array.from({length: 10}, (_, i) => {
+                        const year = String(new Date().getFullYear() - i);
+                        return <option key={year} value={year}>{year}</option>
+                      })}
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                <input 
-                  type="date" 
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="bg-slate-900 border border-slate-800 rounded-xl py-2 pl-10 pr-4 text-sm text-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                <input 
-                  type="text" 
-                  value={filterText}
-                  onChange={(e) => setFilterText(e.target.value)}
-                  placeholder="ძებნა..."
-                  className="bg-slate-900 border border-slate-800 rounded-xl py-2 pl-10 pr-4 text-sm text-slate-300 focus:ring-2 focus:ring-blue-500 outline-none w-64"
-                />
-              </div>
-              <button 
-                type="submit"
-                className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl border border-slate-700 transition-all"
-              >
-                გაფილტვრა
-              </button>
-            </form>
+            </div>
           </div>
 
           {/* Table */}
@@ -242,6 +367,66 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">სტატუსი</th>
                     <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">თარიღი</th>
                   </tr>
+                  <tr className="bg-slate-900/50 border-b border-slate-800">
+                    <td className="px-4 py-2">
+                      <input 
+                        type="text" 
+                        placeholder="ნომერი..."
+                        value={filters.waybillNumber}
+                        onChange={(e) => setFilters({...filters, waybillNumber: e.target.value})}
+                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                      />
+                    </td>
+                    <td className="px-4 py-2">
+                      <input 
+                        type="text" 
+                        placeholder="ორგანიზაცია..."
+                        value={filters.organization}
+                        onChange={(e) => setFilters({...filters, organization: e.target.value})}
+                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                      />
+                    </td>
+                    <td className="px-4 py-2">
+                      <input 
+                        type="text" 
+                        placeholder="TIN..."
+                        value={filters.tin}
+                        onChange={(e) => setFilters({...filters, tin: e.target.value})}
+                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                      />
+                    </td>
+                    <td className="px-4 py-2">
+                      <input 
+                        type="number" 
+                        placeholder="თანხა..."
+                        value={filters.amount}
+                        onChange={(e) => setFilters({...filters, amount: e.target.value})}
+                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                      />
+                    </td>
+                    <td className="px-4 py-2">
+                      <input 
+                        type="text" 
+                        placeholder="მანქანა..."
+                        value={filters.carNumber}
+                        onChange={(e) => setFilters({...filters, carNumber: e.target.value})}
+                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                      />
+                    </td>
+                    <td className="px-4 py-2">
+                      <select 
+                        value={filters.status}
+                        onChange={(e) => setFilters({...filters, status: e.target.value})}
+                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                      >
+                        <option value="">ყველა</option>
+                        <option value="1">აქტიური</option>
+                        <option value="2">დასრულებული</option>
+                        <option value="-2">გაუქმებული</option>
+                      </select>
+                    </td>
+                    <td className="px-4 py-2"></td>
+                  </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800">
                   {loading ? (
@@ -252,8 +437,8 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                         </td>
                       </tr>
                     ))
-                  ) : waybills.length > 0 ? (
-                    waybills.map((wb) => (
+                  ) : paginatedWaybills.length > 0 ? (
+                    paginatedWaybills.map((wb) => (
                       <tr 
                         key={wb.ID} 
                         onClick={() => fetchDetail(wb)}
@@ -300,33 +485,72 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     </tr>
                   )}
                 </tbody>
+                {filteredWaybills.length > 0 && (
+                  <tfoot>
+                    <tr className="bg-blue-600/5 border-t-2 border-blue-600/30 font-bold">
+                      <td className="px-6 py-4"></td>
+                      <td className="px-6 py-4"></td>
+                      <td className="px-6 py-4 text-right text-slate-400 uppercase text-[10px] tracking-wider">სულ:</td>
+                      <td className="px-6 py-4">
+                        <span className="text-lg text-blue-400 font-black">{calculateTotal()} ₾</span>
+                      </td>
+                      <td className="px-6 py-4"></td>
+                      <td className="px-6 py-4"></td>
+                      <td className="px-6 py-4"></td>
+                    </tr>
+                  </tfoot>
+                )}
               </table>
             </div>
+          </div>
 
-            {/* Pagination */}
-            <div className="px-6 py-4 bg-slate-800/30 border-t border-slate-800 flex items-center justify-between">
-              <span className="text-xs text-slate-500">
-                სულ: <span className="text-slate-300 font-bold">{totalCount}</span> ჩანაწერი
-              </span>
-              <div className="flex items-center gap-2">
-                <button 
-                  disabled={currentPage === 0 || loading}
-                  onClick={() => setCurrentPage(prev => prev - 1)}
-                  className="p-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 rounded-lg border border-slate-700 transition-all"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <span className="text-sm font-bold text-slate-300 px-4">
-                  {currentPage + 1} / {Math.ceil(totalCount / 300) || 1}
-                </span>
-                <button 
-                  disabled={(currentPage + 1) * 300 >= totalCount || loading}
-                  onClick={() => setCurrentPage(prev => prev + 1)}
-                  className="p-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 rounded-lg border border-slate-700 transition-all"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
+          {/* Pagination */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
+            <div className="flex items-center gap-3 text-sm text-slate-400">
+              <select 
+                value={itemsPerPage} 
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              >
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+              <span>ნაჩვენები</span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} 
+                disabled={currentPage === 1}
+                className="flex items-center gap-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm font-bold text-slate-300 transition-all border border-slate-700"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                წინა
+              </button>
+              
+              <div className="flex items-center gap-2 text-sm font-bold">
+                <span className="text-blue-500">{currentPage}</span>
+                <span className="text-slate-600">/</span>
+                <span className="text-slate-400">{totalPages || 1}</span>
               </div>
+
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} 
+                disabled={currentPage === totalPages || totalPages === 0}
+                className="flex items-center gap-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm font-bold text-slate-300 transition-all border border-slate-700"
+              >
+                შემდეგი
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="text-sm text-slate-500">
+              სულ: <span className="text-slate-300 font-bold">{filteredWaybills.length}</span> ზედნადები
             </div>
           </div>
         </div>
