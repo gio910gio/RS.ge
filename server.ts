@@ -163,14 +163,6 @@ app.post("/api/check-user", async (req: any, res: any) => {
   }
 });
 
-// თარიღის ფორმატის კონვერტაცია: 2026-03-08 → 08.03.2026
-function formatDateForRS(dateStr: string): string {
-  if (!dateStr) return "";
-  const [y, m, d] = dateStr.split("-");
-  if (!y || !m || !d) return dateStr;
-  return `${d}.${m}.${y}`;
-}
-
 // ========== ზედნადებების სია ==========
 app.post("/api/waybills", async (req: any, res: any) => {
   const { su, sp, startDate, endDate, startRowIndex, type } = req.body;
@@ -181,11 +173,24 @@ app.post("/api/waybills", async (req: any, res: any) => {
       <get_waybills_ex xmlns="http://tempuri.org/">
         <su>${su}</su>
         <sp>${sp}</sp>
-        <beginDate>${formatDateForRS(startDate)}</beginDate>
-        <endDate>${formatDateForRS(endDate)}</endDate>
-        <rowsFrom>${startRowIndex || 0}</rowsFrom>
-        <rowsCount>300</rowsCount>
-        <type>${type || 0}</type>
+        <itypes>${type || ""}</itypes>
+        <buyer_tin></buyer_tin>
+        <statuses></statuses>
+        <car_number></car_number>
+        <begin_date_s>${startDate ? startDate + "T00:00:00" : ""}</begin_date_s>
+        <begin_date_e>${endDate ? endDate + "T23:59:59" : ""}</begin_date_e>
+        <create_date_s xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <create_date_e xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <driver_tin></driver_tin>
+        <delivery_date_s xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <delivery_date_e xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <full_amount xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <waybill_number></waybill_number>
+        <close_date_s xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <close_date_e xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <s_user_ids></s_user_ids>
+        <comment></comment>
+        <is_confirmed xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
       </get_waybills_ex>`);
 
     const xmlResult = xml.match(/<get_waybills_exResult>(.*?)<\/get_waybills_exResult>/s)?.[1] || "";
