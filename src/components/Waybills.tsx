@@ -55,7 +55,7 @@ export default function Waybills({ su, sp }: WaybillsProps) {
   const [waybills, setWaybills] = useState<Waybill[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(25);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentTab, setCurrentTab] = useState("tab_given");
   const today = new Date();
   const thirtyDaysAgo = new Date();

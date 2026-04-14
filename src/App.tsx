@@ -7,56 +7,29 @@ import {
   User,
   Hash,
   Building2,
-  FileText
+  FileText,
+  BarChart3
 } from "lucide-react";
 import { motion } from "motion/react";
 import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
 import Waybills from "./components/Waybills";
 import Organizations from "./components/Organizations";
+import Dashboard from "./components/Dashboard";
 
 // --- Components ---
 
 function Header({ su, onLogout }: { su: string; onLogout: () => void }) {
-  const location = useLocation();
-  
   return (
     <header className="h-20 border-b border-slate-800 bg-slate-900/50 backdrop-blur-xl sticky top-0 z-30 px-8 flex items-center justify-between">
-      <div className="flex items-center gap-8">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
-            <LayoutDashboard className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-white leading-none mb-1">RS.GE საძიებო სისტემა</h1>
-            <p className="text-xs text-slate-500 font-medium">სისტემის მართვის პანელი</p>
-          </div>
+      <Link to="/" className="flex items-center gap-4 hover:bg-white/5 p-2 rounded-xl transition-all group">
+        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20 group-hover:scale-105 transition-transform">
+          <BarChart3 className="w-5 h-5 text-white" />
         </div>
-
-        <nav className="flex items-center gap-2">
-          <Link 
-            to="/waybills"
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-              location.pathname === "/waybills" 
-                ? "bg-blue-600/10 text-blue-400 border border-blue-600/20" 
-                : "text-slate-500 hover:text-slate-300"
-            }`}
-          >
-            <FileText className="w-4 h-4" />
-            📋 ზედნადებები
-          </Link>
-          <Link 
-            to="/organizations"
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-              location.pathname === "/organizations" 
-                ? "bg-indigo-600/10 text-indigo-400 border border-indigo-600/20" 
-                : "text-slate-500 hover:text-slate-300"
-            }`}
-          >
-            <Building2 className="w-4 h-4" />
-            🏢 ორგანიზაციები
-          </Link>
-        </nav>
-      </div>
+        <div>
+          <h1 className="text-xl font-bold text-white leading-none mb-1">MYRS.GE</h1>
+          <p className="text-xs text-slate-500 font-medium">სისტემის პანელი</p>
+        </div>
+      </Link>
 
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-3 px-4 py-2 bg-slate-800/50 rounded-xl border border-slate-700">
@@ -118,7 +91,7 @@ export default function App() {
             <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-600/20">
               <LayoutDashboard className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2">RS.GE საძიებო სისტემა</h1>
+            <h1 className="text-2xl font-bold text-white mb-2">MYRS.GE</h1>
             <p className="text-slate-400 text-sm text-center">ავტორიზაცია სერვისების მართვის მონაცემებით</p>
           </div>
 
@@ -183,9 +156,10 @@ export default function App() {
         <Header su={su} onLogout={() => setIsLoggedIn(false)} />
         
         <Routes>
+          <Route path="/dashboard" element={<Dashboard su={su} />} />
           <Route path="/waybills" element={<Waybills su={su} sp={sp} />} />
           <Route path="/organizations" element={<Organizations su={su} sp={sp} />} />
-          <Route path="/" element={<Navigate to="/waybills" replace />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>
     </BrowserRouter>
