@@ -6,7 +6,8 @@ import {
   BarChart3, 
   TrendingUp,
   LayoutDashboard,
-  ArrowRight
+  ArrowRight,
+  Users
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -49,6 +50,14 @@ export default function Dashboard({ su }: DashboardProps) {
       path: "#",
       primary: false,
       disabled: true,
+      color: "from-slate-700 to-slate-800"
+    },
+    {
+      title: "დებიტორე კრედიტორები",
+      description: "დავალიანებების მართვა და კონტროლი",
+      icon: <Users className="w-8 h-8" />,
+      path: "/debtors",
+      primary: false,
       color: "from-slate-700 to-slate-800"
     }
   ];
