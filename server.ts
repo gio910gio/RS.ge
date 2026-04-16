@@ -173,14 +173,14 @@ app.post("/api/waybills", async (req: any, res: any) => {
       <get_waybills_ex xmlns="http://tempuri.org/">
         <su>${su}</su>
         <sp>${sp}</sp>
-        <itypes>${type || ""}</itypes>
+        <itypes>${type === 2 ? "3,4,5,6" : type === 1 ? "1,2" : "1,2,3,4,5,6"}</itypes>
         <buyer_tin></buyer_tin>
         <statuses>${statuses || ""}</statuses>
-        <car_number>${carNumber || ""}</car_number>
-        <begin_date_s>${startDate ? startDate + "T00:00:00" : ""}</begin_date_s>
-        <begin_date_e>${endDate ? endDate + "T23:59:59" : ""}</begin_date_e>
-        <create_date_s xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
-        <create_date_e xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        ${carNumber ? `<car_number>${carNumber}</car_number>` : `<car_number xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>`}
+        <begin_date_s xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <begin_date_e xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <create_date_s>${startDate ? startDate + "T00:00:00" : ""}</create_date_s>
+        <create_date_e>${endDate ? endDate + "T23:59:59" : ""}</create_date_e>
         <driver_tin></driver_tin>
         <delivery_date_s xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
         <delivery_date_e xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>

@@ -24,7 +24,7 @@ export default function Dashboard({ su }: DashboardProps) {
       description: "ზედნადებების ძიება და მართვა",
       icon: <FileText className="w-8 h-8" />,
       path: "/waybills",
-      primary: true,
+      primary: false,
       color: "from-blue-600 to-blue-800"
     },
     {
@@ -78,8 +78,14 @@ export default function Dashboard({ su }: DashboardProps) {
                 className={`group relative p-8 rounded-3xl border transition-all duration-300 ${
                   mod.primary 
                     ? `bg-gradient-to-br ${mod.color} border-blue-500 shadow-2xl shadow-blue-900/20` 
-                    : "bg-slate-900 border-slate-800 hover:border-slate-700 shadow-xl"
+                    : "bg-slate-900 border-slate-800 shadow-xl"
                 }`}
+                style={!mod.primary ? {
+                  background: undefined,
+                  transition: 'background 0.3s, border-color 0.3s'
+                } : undefined}
+                onMouseEnter={e => { if (!mod.primary) { (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, #2563eb, #1e40af)'; (e.currentTarget as HTMLElement).style.borderColor = '#3b82f6'; } }}
+                onMouseLeave={e => { if (!mod.primary) { (e.currentTarget as HTMLElement).style.background = ''; (e.currentTarget as HTMLElement).style.borderColor = ''; } }}
               >
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 ${
                   mod.primary ? "bg-white/20" : "bg-blue-600/10 text-blue-400"

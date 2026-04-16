@@ -23,6 +23,8 @@ import { motion, AnimatePresence } from "motion/react";
 
 interface Waybill {
   ID: number;
+  SELLER_NAME: string;
+  SELLER_TIN: string;
   TYPE: number;
   CREATE_DATE: string;
   BUYER_TIN: string;
@@ -92,12 +94,13 @@ export default function Waybills({ su, sp }: WaybillsProps) {
 
   // --- Handlers ---
 
-  const fetchWaybills = async (page: number = 0) => {
+  const fetchWaybills = async (page: number = 0, tabOverride?: string) => {
     setLoading(true);
+    const activeTab = tabOverride ?? currentTab;
     try {
       let type = 0;
-      if (currentTab === "tab_given") type = 1;
-      if (currentTab === "tab_received") type = 2;
+      if (activeTab === "tab_given") type = 1;
+      if (activeTab === "tab_received") type = 2;
 
       const startStr = `${startDate.year}-${startDate.month}-${startDate.day}`;
       const endStr = `${endDate.year}-${endDate.month}-${endDate.day}`;
@@ -156,13 +159,17 @@ export default function Waybills({ su, sp }: WaybillsProps) {
   }, [currentTab, startDate.day, startDate.month, startDate.year, endDate.day, endDate.month, endDate.year]);
 
   const filteredWaybills = waybills.filter(wb => {
-    // Organization filter (Frontend)
-    if (filters.organization && !(wb.BUYER_NAME || "").toLowerCase().includes(filters.organization.toLowerCase())) {
+    // Organization filter (Frontend) - checks both BUYER and SELLER
+    if (filters.organization && 
+      !(wb.BUYER_NAME || "").toLowerCase().includes(filters.organization.toLowerCase()) &&
+      !(wb.SELLER_NAME || "").toLowerCase().includes(filters.organization.toLowerCase())) {
       return false;
     }
     
-    // TIN filter (Frontend)
-    if (filters.tin && !(wb.BUYER_TIN || "").toLowerCase().includes(filters.tin.toLowerCase())) {
+    // TIN filter (Frontend) - checks both BUYER and SELLER
+    if (filters.tin && 
+      !(wb.BUYER_TIN || "").toLowerCase().includes(filters.tin.toLowerCase()) &&
+      !(wb.SELLER_TIN || "").toLowerCase().includes(filters.tin.toLowerCase())) {
       return false;
     }
 
@@ -172,7 +179,7 @@ export default function Waybills({ su, sp }: WaybillsProps) {
     }
 
     // Car Number filter (Frontend)
-    if (filters.carNumber && !(wb.CAR_NUMBER || "").toLowerCase().includes(filters.carNumber.toLowerCase())) {
+    if (filters.carNumber && filters.carNumber !== "" && !(wb.CAR_NUMBER || "").toLowerCase().includes(filters.carNumber.toLowerCase())) {
       return false;
     }
 
@@ -244,6 +251,7 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                   onClick={() => {
                     setCurrentTab(tab.id);
                     setCurrentPage(0);
+                    fetchWaybills(0, tab.id);
                   }}
                   className={`flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-bold transition-all ${
                     currentTab === tab.id 
