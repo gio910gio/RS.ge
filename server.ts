@@ -193,7 +193,9 @@ app.post("/api/waybills", async (req: any, res: any) => {
         <is_confirmed xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
       </get_waybills_ex>`);
 
-    const xmlResult = xml.match(/<get_waybills_exResult>(.*?)<\/get_waybills_exResult>/s)?.[1] || "";
+    const xmlResult = xml.match(/<get_waybills_exResult>(.*?)<\/get_waybills_exResult>/s)?.[1] 
+      || xml.match(/<get_buyer_waybillsResult>(.*?)<\/get_buyer_waybillsResult>/s)?.[1] 
+      || "";
     console.log("SU:", su, "SP:", sp);
     console.log("SOAP response:", xmlResult?.substring(0, 500));
     console.log("Waybills raw (first 300):", String(xmlResult).substring(0, 300));

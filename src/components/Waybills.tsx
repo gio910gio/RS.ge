@@ -101,6 +101,7 @@ export default function Waybills({ su, sp }: WaybillsProps) {
       let type = 0;
       if (activeTab === "tab_given") type = 1;
       if (activeTab === "tab_received") type = 2;
+      if (activeTab === "tab_all") type = 0;
 
       const startStr = `${startDate.year}-${startDate.month}-${startDate.day}`;
       const endStr = `${endDate.year}-${endDate.month}-${endDate.day}`;
@@ -156,7 +157,7 @@ export default function Waybills({ su, sp }: WaybillsProps) {
 
   useEffect(() => {
     fetchWaybills(0);
-  }, [currentTab, startDate.day, startDate.month, startDate.year, endDate.day, endDate.month, endDate.year]);
+  }, []);
 
   const filteredWaybills = waybills.filter(wb => {
     // Organization filter (Frontend) - checks both BUYER and SELLER
@@ -250,7 +251,7 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                   key={tab.id}
                   onClick={() => {
                     setCurrentTab(tab.id);
-                    setCurrentPage(0);
+                    setCurrentPage(1);
                     fetchWaybills(0, tab.id);
                   }}
                   className={`flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-bold transition-all ${
@@ -356,6 +357,16 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                       })}
                     </select>
                   </div>
+                </div>
+
+                <div className="flex items-end pb-0.5">
+                  <button 
+                    onClick={() => fetchWaybills(0)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-all shadow-lg shadow-blue-600/20"
+                  >
+                    <Search className="w-3.5 h-3.5" />
+                    ძებნა
+                  </button>
                 </div>
               </div>
             </div>
