@@ -235,13 +235,16 @@ export default function Waybills({ su, sp }: WaybillsProps) {
   }, []);
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex overflow-hidden bg-[var(--bg-page)]">
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto p-6 md:p-8">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Tabs & Filters */}
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
-            <div className="flex p-1 bg-slate-900 rounded-xl border border-slate-800">
+            <div 
+              className="flex p-1 rounded-xl border"
+              style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-default)" }}
+            >
               {[
                 { id: "tab_given", label: "გაცემული", icon: ArrowRightLeft },
                 { id: "tab_received", label: "მიღებული", icon: FileText },
@@ -256,9 +259,13 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                   }}
                   className={`flex items-center gap-2 px-6 py-2 rounded-lg text-sm font-bold transition-all ${
                     currentTab === tab.id 
-                      ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" 
-                      : "text-slate-500 hover:text-slate-300"
+                      ? "text-white shadow-lg" 
+                      : "text-[var(--text-secondary)] hover:bg-[var(--nav-hover-bg)] hover:text-[var(--text-primary)]"
                   }`}
+                  style={currentTab === tab.id ? {
+                    background: "linear-gradient(135deg, var(--bg-header-from), var(--bg-header-to))",
+                    boxShadow: "0 4px 12px rgba(30, 136, 229, 0.25)"
+                  } : {}}
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
@@ -268,14 +275,26 @@ export default function Waybills({ su, sp }: WaybillsProps) {
 
             <div className="flex flex-wrap gap-3">
               {/* თარიღის დიაპაზონი */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
+              <div 
+                className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-2xl border"
+                style={{ 
+                  backgroundColor: "var(--bg-surface)", 
+                  borderColor: "var(--border-default)",
+                  boxShadow: "var(--shadow-card)"
+                }}
+              >
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">თარიღიდან:</label>
+                  <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest ml-1">თარიღიდან:</label>
                   <div className="flex items-center gap-1">
                     <select 
                       value={startDate.day} 
                       onChange={(e) => setStartDate({...startDate, day: e.target.value})}
-                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      style={{ 
+                        backgroundColor: "var(--bg-surface-2)", 
+                        borderColor: "var(--border-default)",
+                        color: "var(--text-primary)"
+                      }}
                     >
                       {Array.from({length: 31}, (_, i) => {
                         const d = String(i + 1).padStart(2, '0');
@@ -285,7 +304,12 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     <select 
                       value={startDate.month} 
                       onChange={(e) => setStartDate({...startDate, month: e.target.value})}
-                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      style={{ 
+                        backgroundColor: "var(--bg-surface-2)", 
+                        borderColor: "var(--border-default)",
+                        color: "var(--text-primary)"
+                      }}
                     >
                       <option value="01">იანვარი</option>
                       <option value="02">თებერვალი</option>
@@ -303,7 +327,12 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     <select 
                       value={startDate.year} 
                       onChange={(e) => setStartDate({...startDate, year: e.target.value})}
-                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      style={{ 
+                        backgroundColor: "var(--bg-surface-2)", 
+                        borderColor: "var(--border-default)",
+                        color: "var(--text-primary)"
+                      }}
                     >
                       {Array.from({length: 10}, (_, i) => {
                         const year = String(new Date().getFullYear() - i);
@@ -313,15 +342,20 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                   </div>
                 </div>
 
-                <div className="w-px h-8 bg-slate-800 hidden sm:block mx-2" />
+                <div className="w-px h-8 hidden sm:block mx-2" style={{ backgroundColor: "var(--border-default)" }} />
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">თარიღამდე:</label>
+                  <label className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest ml-1">თარიღამდე:</label>
                   <div className="flex items-center gap-1">
                     <select 
                       value={endDate.day} 
                       onChange={(e) => setEndDate({...endDate, day: e.target.value})}
-                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      style={{ 
+                        backgroundColor: "var(--bg-surface-2)", 
+                        borderColor: "var(--border-default)",
+                        color: "var(--text-primary)"
+                      }}
                     >
                       {Array.from({length: 31}, (_, i) => {
                         const d = String(i + 1).padStart(2, '0');
@@ -331,7 +365,12 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     <select 
                       value={endDate.month} 
                       onChange={(e) => setEndDate({...endDate, month: e.target.value})}
-                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      style={{ 
+                        backgroundColor: "var(--bg-surface-2)", 
+                        borderColor: "var(--border-default)",
+                        color: "var(--text-primary)"
+                      }}
                     >
                       <option value="01">იანვარი</option>
                       <option value="02">თებერვალი</option>
@@ -349,7 +388,12 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     <select 
                       value={endDate.year} 
                       onChange={(e) => setEndDate({...endDate, year: e.target.value})}
-                      className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      className="border rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                      style={{ 
+                        backgroundColor: "var(--bg-surface-2)", 
+                        borderColor: "var(--border-default)",
+                        color: "var(--text-primary)"
+                      }}
                     >
                       {Array.from({length: 10}, (_, i) => {
                         const year = String(new Date().getFullYear() - i);
@@ -362,7 +406,8 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                 <div className="flex items-end pb-0.5">
                   <button 
                     onClick={() => fetchWaybills(0)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg transition-all shadow-lg shadow-blue-600/20"
+                    className="flex items-center gap-2 px-5 py-2 text-white text-xs font-bold rounded-lg transition-all hover:opacity-90 shadow-lg shadow-blue-500/20"
+                    style={{ background: "linear-gradient(135deg, var(--bg-header-from), var(--bg-header-to))" }}
                   >
                     <Search className="w-3.5 h-3.5" />
                     ძებნა
@@ -373,27 +418,41 @@ export default function Waybills({ su, sp }: WaybillsProps) {
           </div>
 
           {/* Table */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div 
+            className="rounded-2xl overflow-hidden border"
+            style={{ 
+              backgroundColor: "var(--bg-surface)", 
+              borderColor: "var(--border-default)",
+              boxShadow: "var(--shadow-card)"
+            }}
+          >
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-800/50 border-b border-slate-800">
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">ნომერი</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">ორგანიზაცია</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">TIN</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">თანხა</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">მანქანა</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">სტატუსი</th>
-                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">თარიღი</th>
+                  <tr 
+                    className="border-b"
+                    style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}
+                  >
+                    <th className="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">ნომერი</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">ორგანიზაცია</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">TIN</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">თანხა</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">მანქანა</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">სტატუსი</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">თარიღი</th>
                   </tr>
-                  <tr className="bg-slate-900/50 border-b border-slate-800">
+                  <tr 
+                    className="border-b"
+                    style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-default)" }}
+                  >
                     <td className="px-4 py-2">
                       <input 
                         type="text" 
                         placeholder="ნომერი..."
                         value={filters.waybillNumber}
                         onChange={(e) => setFilters({...filters, waybillNumber: e.target.value})}
-                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                        className="w-full rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        style={{ backgroundColor: "var(--bg-surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
                       />
                     </td>
                     <td className="px-4 py-2">
@@ -402,7 +461,8 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                         placeholder="ორგანიზაცია..."
                         value={filters.organization}
                         onChange={(e) => setFilters({...filters, organization: e.target.value})}
-                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                        className="w-full rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        style={{ backgroundColor: "var(--bg-surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
                       />
                     </td>
                     <td className="px-4 py-2">
@@ -411,7 +471,8 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                         placeholder="TIN..."
                         value={filters.tin}
                         onChange={(e) => setFilters({...filters, tin: e.target.value})}
-                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                        className="w-full rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        style={{ backgroundColor: "var(--bg-surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
                       />
                     </td>
                     <td className="px-4 py-2">
@@ -420,7 +481,8 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                         placeholder="თანხა..."
                         value={filters.amount}
                         onChange={(e) => setFilters({...filters, amount: e.target.value})}
-                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                        className="w-full rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        style={{ backgroundColor: "var(--bg-surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
                       />
                     </td>
                     <td className="px-4 py-2">
@@ -429,14 +491,16 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                         placeholder="მანქანა..."
                         value={filters.carNumber}
                         onChange={(e) => setFilters({...filters, carNumber: e.target.value})}
-                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                        className="w-full rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        style={{ backgroundColor: "var(--bg-surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
                       />
                     </td>
                     <td className="px-4 py-2">
                       <select 
                         value={filters.status}
                         onChange={(e) => setFilters({...filters, status: e.target.value})}
-                        className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                        className="w-full rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        style={{ backgroundColor: "var(--bg-surface-2)", border: "1px solid var(--border-default)", color: "var(--text-primary)" }}
                       >
                         <option value="">ყველა</option>
                         <option value="1">აქტიური</option>
@@ -447,41 +511,50 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     <td className="px-4 py-2"></td>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y" style={{ borderColor: "var(--border-default)" }}>
                   {loading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <tr key={i} className="animate-pulse">
                         <td colSpan={7} className="px-6 py-8">
-                          <div className="h-4 bg-slate-800 rounded w-full"></div>
+                          <div className="h-4 rounded w-full" style={{ backgroundColor: "var(--bg-surface-2)" }}></div>
                         </td>
                       </tr>
                     ))
                   ) : paginatedWaybills.length > 0 ? (
-                    paginatedWaybills.map((wb) => (
+                    paginatedWaybills.map((wb, index) => (
                       <tr 
                         key={wb.ID} 
                         onClick={() => fetchDetail(wb)}
-                        className={`hover:bg-slate-800/50 cursor-pointer transition-colors ${selectedWaybill?.ID === wb.ID ? "bg-blue-600/5" : ""}`}
+                        className="cursor-pointer transition-colors"
+                        style={{ 
+                          backgroundColor: selectedWaybill?.ID === wb.ID ? "rgba(37, 99, 235, 0.05)" : (index % 2 === 0 ? "transparent" : "var(--bg-surface-2)"),
+                          color: "var(--text-primary)"
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = "var(--nav-hover-bg)"}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = selectedWaybill?.ID === wb.ID ? "rgba(37, 99, 235, 0.05)" : (index % 2 === 0 ? "transparent" : "var(--bg-surface-2)")}
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-blue-600/10 rounded-lg flex items-center justify-center text-blue-400">
+                            <div 
+                              className="w-8 h-8 rounded-lg flex items-center justify-center"
+                              style={{ backgroundColor: "rgba(37, 99, 235, 0.1)", color: "var(--bg-header-from)" }}
+                            >
                               <FileText className="w-4 h-4" />
                             </div>
-                            <span className="text-sm font-bold text-white">{wb.WAYBILL_NUMBER || wb.ID}</span>
+                            <span className="text-sm font-bold">{wb.WAYBILL_NUMBER || wb.ID}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-slate-300 block max-w-[200px] truncate">{wb.BUYER_NAME}</span>
+                          <span className="text-sm block max-w-[200px] truncate" style={{ color: "var(--text-primary)" }}>{wb.BUYER_NAME}</span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-xs font-mono text-slate-500">{wb.BUYER_TIN}</span>
+                          <span className="text-xs font-mono" style={{ color: "var(--text-secondary)" }}>{wb.BUYER_TIN}</span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm font-bold text-white">{Number(wb.FULL_AMOUNT || 0).toFixed(2)} ₾</span>
+                          <span className="text-sm font-bold">{Number(wb.FULL_AMOUNT || 0).toFixed(2)} ₾</span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-xs text-slate-400">{wb.CAR_NUMBER || "-"}</span>
+                          <span className="text-xs" style={{ color: "var(--text-secondary)" }}>{wb.CAR_NUMBER || "-"}</span>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`px-3 py-1 rounded-full text-[10px] font-bold border ${getStatusColor(wb.STATUS)}`}>
@@ -489,7 +562,7 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-xs text-slate-500">{wb.CREATE_DATE}</span>
+                          <span className="text-xs" style={{ color: "var(--text-secondary)" }}>{wb.CREATE_DATE}</span>
                         </td>
                       </tr>
                     ))
@@ -497,8 +570,8 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     <tr>
                       <td colSpan={7} className="px-6 py-20 text-center">
                         <div className="flex flex-col items-center gap-4">
-                          <Info className="w-12 h-12 text-slate-700" />
-                          <p className="text-slate-500 font-medium">ჩანაწერები ვერ მოიძებნა</p>
+                          <Info className="w-12 h-12" style={{ color: "var(--text-muted)" }} />
+                          <p className="font-medium" style={{ color: "var(--text-secondary)" }}>ჩანაწერები ვერ მოიძებნა</p>
                         </div>
                       </td>
                     </tr>
@@ -506,12 +579,15 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                 </tbody>
                 {filteredWaybills.length > 0 && (
                   <tfoot>
-                    <tr className="bg-blue-600/5 border-t-2 border-blue-600/30 font-bold">
+                    <tr 
+                      className="border-t-2 font-bold"
+                      style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "rgba(37, 99, 235, 0.3)" }}
+                    >
                       <td className="px-6 py-4"></td>
                       <td className="px-6 py-4"></td>
-                      <td className="px-6 py-4 text-right text-slate-400 uppercase text-[10px] tracking-wider">სულ:</td>
+                      <td className="px-6 py-4 text-right uppercase text-[10px] tracking-wider" style={{ color: "var(--text-secondary)" }}>სულ:</td>
                       <td className="px-6 py-4">
-                        <span className="text-lg text-blue-400 font-black">{calculateTotal()} ₾</span>
+                        <span className="text-lg font-black text-blue-500">{calculateTotal()} ₾</span>
                       </td>
                       <td className="px-6 py-4"></td>
                       <td className="px-6 py-4"></td>
@@ -524,15 +600,23 @@ export default function Waybills({ su, sp }: WaybillsProps) {
           </div>
 
           {/* Pagination */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
-            <div className="flex items-center gap-3 text-sm text-slate-400">
+          <div 
+            className="rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 border"
+            style={{ 
+              backgroundColor: "var(--bg-surface)", 
+              borderColor: "var(--border-default)",
+              boxShadow: "var(--shadow-card)"
+            }}
+          >
+            <div className="flex items-center gap-3 text-sm" style={{ color: "var(--text-secondary)" }}>
               <select 
                 value={itemsPerPage} 
                 onChange={(e) => {
                   setItemsPerPage(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="border rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
               >
                 <option value="10">10</option>
                 <option value="25">25</option>
@@ -546,7 +630,8 @@ export default function Waybills({ su, sp }: WaybillsProps) {
               <button 
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} 
                 disabled={currentPage === 1}
-                className="flex items-center gap-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm font-bold text-slate-300 transition-all border border-slate-700"
+                className="flex items-center gap-1 px-4 py-2 border rounded-xl text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
               >
                 <ChevronLeft className="w-4 h-4" />
                 წინა
@@ -554,22 +639,23 @@ export default function Waybills({ su, sp }: WaybillsProps) {
               
               <div className="flex items-center gap-2 text-sm font-bold">
                 <span className="text-blue-500">{currentPage}</span>
-                <span className="text-slate-600">/</span>
-                <span className="text-slate-400">{totalPages || 1}</span>
+                <span style={{ color: "var(--text-muted)" }}>/</span>
+                <span style={{ color: "var(--text-secondary)" }}>{totalPages || 1}</span>
               </div>
 
               <button 
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} 
                 disabled={currentPage === totalPages || totalPages === 0}
-                className="flex items-center gap-1 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-sm font-bold text-slate-300 transition-all border border-slate-700"
+                className="flex items-center gap-1 px-4 py-2 border rounded-xl text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
               >
                 შემდეგი
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="text-sm text-slate-500">
-              სულ: <span className="text-slate-300 font-bold">{filteredWaybills.length}</span> ზედნადები
+            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              სულ: <span className="font-bold" style={{ color: "var(--text-primary)" }}>{filteredWaybills.length}</span> ზედნადები
             </div>
           </div>
         </div>
@@ -590,24 +676,32 @@ export default function Waybills({ su, sp }: WaybillsProps) {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-4xl max-h-[90vh] bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+              className="relative w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col border"
+              style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-default)" }}
             >
               {/* Header */}
-              <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
+              <div 
+                className="p-6 border-b flex items-center justify-between backdrop-blur-md sticky top-0 z-10"
+                style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-default)" }}
+              >
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/20">
+                  <div 
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
+                    style={{ background: "linear-gradient(135deg, var(--bg-header-from), var(--bg-header-to))", boxShadow: "0 4px 12px rgba(37, 99, 235, 0.2)" }}
+                  >
                     <FileText className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="font-bold text-xl text-white leading-none mb-1">
+                    <h2 className="font-bold text-xl leading-none mb-1" style={{ color: "var(--text-primary)" }}>
                       ზედნადები #{selectedWaybill.WAYBILL_NUMBER || selectedWaybill.ID} | ID-{selectedWaybill.ID}
                     </h2>
-                    <p className="text-xs text-slate-500">დეტალური ინფორმაცია</p>
+                    <p className="text-xs" style={{ color: "var(--text-secondary)" }}>დეტალური ინფორმაცია</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setSelectedWaybill(null)}
-                  className="p-2 text-slate-500 hover:text-white hover:bg-slate-800 rounded-xl transition-all"
+                  className="p-2 rounded-xl transition-all hover:opacity-70"
+                  style={{ color: "var(--text-secondary)" }}
                 >
                   <XCircle className="w-8 h-8" />
                 </button>
@@ -618,60 +712,69 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                 {detailLoading ? (
                   <div className="flex flex-col items-center justify-center py-20 gap-4">
                     <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-                    <p className="text-slate-500 text-sm font-medium">იტვირთება მონაცემები...</p>
+                    <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>იტვირთება მონაცემები...</p>
                   </div>
                 ) : waybillDetail ? (
                   <>
                     {/* Basic Info Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Seller */}
-                      <div className="p-6 bg-slate-800/40 rounded-3xl border border-slate-800/60">
+                      <div 
+                        className="p-6 rounded-3xl border"
+                        style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}
+                      >
                         <div className="flex items-center gap-3 mb-4">
                           <div className="p-2 bg-blue-500/10 rounded-lg">
-                            <Building2 className="w-5 h-5 text-blue-400" />
+                            <Building2 className="w-5 h-5 text-blue-500" />
                           </div>
-                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">გამყიდველი</span>
+                          <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "var(--text-secondary)" }}>გამყიდველი</span>
                         </div>
                         <div className="space-y-2">
-                          <p className="text-base font-bold text-white">{waybillDetail.waybill.SELLER_NAME}</p>
-                          <p className="text-sm text-slate-400 font-mono">TIN: {waybillDetail.waybill.SELLER_TIN}</p>
-                          <p className="text-sm text-slate-400">{waybillDetail.waybill.START_ADDRESS}</p>
+                          <p className="text-base font-bold" style={{ color: "var(--text-primary)" }}>{waybillDetail.waybill.SELLER_NAME}</p>
+                          <p className="text-sm font-mono" style={{ color: "var(--text-secondary)" }}>TIN: {waybillDetail.waybill.SELLER_TIN}</p>
+                          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{waybillDetail.waybill.START_ADDRESS}</p>
                         </div>
                       </div>
 
                       {/* Buyer */}
-                      <div className="p-6 bg-slate-800/40 rounded-3xl border border-slate-800/60">
+                      <div 
+                        className="p-6 rounded-3xl border"
+                        style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}
+                      >
                         <div className="flex items-center gap-3 mb-4">
                           <div className="p-2 bg-indigo-500/10 rounded-lg">
-                            <User className="w-5 h-5 text-indigo-400" />
+                            <User className="w-5 h-5 text-indigo-500" />
                           </div>
-                          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">მყიდველი</span>
+                          <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "var(--text-secondary)" }}>მყიდველი</span>
                         </div>
                         <div className="space-y-2">
-                          <p className="text-base font-bold text-white">{waybillDetail.waybill.BUYER_NAME}</p>
-                          <p className="text-sm text-slate-400 font-mono">TIN: {waybillDetail.waybill.BUYER_TIN}</p>
+                          <p className="text-base font-bold" style={{ color: "var(--text-primary)" }}>{waybillDetail.waybill.BUYER_NAME}</p>
+                          <p className="text-sm font-mono" style={{ color: "var(--text-secondary)" }}>TIN: {waybillDetail.waybill.BUYER_TIN}</p>
                         </div>
                       </div>
 
                       {/* Logistics & Transport */}
-                      <div className="p-6 bg-slate-800/40 rounded-3xl border border-slate-800/60 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div 
+                        className="p-6 rounded-3xl border md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8"
+                        style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}
+                      >
                         <div className="space-y-6">
                           <div className="flex items-start gap-4">
                             <div className="p-2 bg-rose-500/10 rounded-lg">
-                              <MapPin className="w-5 h-5 text-rose-400" />
+                              <MapPin className="w-5 h-5 text-rose-500" />
                             </div>
                             <div>
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">საწყისი მისამართი</span>
-                              <p className="text-sm text-slate-300 mt-1">{waybillDetail.waybill.START_ADDRESS}</p>
+                              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>საწყისი მისამართი</span>
+                              <p className="text-sm mt-1" style={{ color: "var(--text-primary)" }}>{waybillDetail.waybill.START_ADDRESS}</p>
                             </div>
                           </div>
                           <div className="flex items-start gap-4">
                             <div className="p-2 bg-emerald-500/10 rounded-lg">
-                              <MapPin className="w-5 h-5 text-emerald-400" />
+                              <MapPin className="w-5 h-5 text-emerald-500" />
                             </div>
                             <div>
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">საბოლოო მისამართი</span>
-                              <p className="text-sm text-slate-300 mt-1">{waybillDetail.waybill.END_ADDRESS}</p>
+                               <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>საბოლოო მისამართი</span>
+                              <p className="text-sm mt-1" style={{ color: "var(--text-primary)" }}>{waybillDetail.waybill.END_ADDRESS}</p>
                             </div>
                           </div>
                         </div>
@@ -679,25 +782,28 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                         <div className="space-y-6">
                           <div className="flex items-start gap-4">
                             <div className="p-2 bg-amber-500/10 rounded-lg">
-                              <Truck className="w-5 h-5 text-amber-400" />
+                              <Truck className="w-5 h-5 text-amber-500" />
                             </div>
                             <div>
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">მძღოლი & მანქანა</span>
-                              <p className="text-sm text-slate-300 mt-1">{waybillDetail.waybill.DRIVER_NAME || "-"}</p>
-                              <p className="text-xs text-slate-500 font-mono mt-1">TIN: {waybillDetail.waybill.DRIVER_TIN || "-"}</p>
-                              <p className="text-xs text-slate-300 font-mono mt-1 bg-slate-800 px-2 py-1 rounded inline-block">
+                               <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>მძღოლი & მანქანა</span>
+                              <p className="text-sm mt-1" style={{ color: "var(--text-primary)" }}>{waybillDetail.waybill.DRIVER_NAME || "-"}</p>
+                              <p className="text-xs font-mono mt-1" style={{ color: "var(--text-muted)" }}>TIN: {waybillDetail.waybill.DRIVER_TIN || "-"}</p>
+                              <p 
+                                className="text-xs font-mono mt-1 px-2 py-1 rounded inline-block"
+                                style={{ backgroundColor: "var(--bg-surface)", color: "var(--text-primary)" }}
+                              >
                                 {waybillDetail.waybill.CAR_NUMBER || "-"}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-start gap-4">
-                            <div className="p-2 bg-slate-700 rounded-lg">
-                              <Calendar className="w-5 h-5 text-slate-400" />
+                            <div className="p-2 rounded-lg" style={{ backgroundColor: "var(--bg-surface)", color: "var(--text-muted)" }}>
+                              <Calendar className="w-5 h-5" />
                             </div>
                             <div className="flex-1 flex justify-between items-start">
                               <div>
-                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">თარიღი & სტატუსი</span>
-                                <p className="text-sm text-slate-300 mt-1">{waybillDetail.waybill.CREATE_DATE}</p>
+                                <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>თარიღი & სტატუსი</span>
+                                <p className="text-sm mt-1" style={{ color: "var(--text-primary)" }}>{waybillDetail.waybill.CREATE_DATE}</p>
                               </div>
                               <span className={`px-3 py-1 rounded-full text-[10px] font-bold border mt-4 ${getStatusColor(waybillDetail.waybill.STATUS)}`}>
                                 {getStatusText(waybillDetail.waybill.STATUS)}
@@ -711,35 +817,41 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     {/* Goods Table */}
                     <div className="space-y-4">
                       <div className="flex items-center justify-between px-2">
-                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                          <Package className="w-5 h-5 text-blue-400" />
+                        <h3 className="text-sm font-bold flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
+                          <Package className="w-5 h-5 text-blue-500" />
                           საქონლის სია
                         </h3>
-                        <span className="text-xs text-slate-500 font-medium">{waybillDetail.goods.length} დასახელება</span>
+                        <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>{waybillDetail.goods.length} დასახელება</span>
                       </div>
-                      <div className="bg-slate-950 rounded-3xl border border-slate-800 overflow-hidden shadow-inner">
+                      <div 
+                        className="rounded-3xl border overflow-hidden shadow-inner"
+                        style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}
+                      >
                         <table className="w-full text-left border-collapse">
                           <thead>
-                            <tr className="bg-slate-900/80 border-b border-slate-800">
-                              <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider w-12">#</th>
-                              <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider">დასახელება</th>
-                              <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">ერთეული</th>
-                              <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">რაოდ.</th>
-                              <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">ფასი</th>
-                              <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">თანხა</th>
+                            <tr 
+                              className="border-b"
+                              style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-default)" }}
+                            >
+                              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider w-12" style={{ color: "var(--text-secondary)" }}>#</th>
+                              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>დასახელება</th>
+                              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-center" style={{ color: "var(--text-secondary)" }}>ერთეული</th>
+                              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-right" style={{ color: "var(--text-secondary)" }}>რაოდ.</th>
+                              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-right" style={{ color: "var(--text-secondary)" }}>ფასი</th>
+                              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-wider text-right" style={{ color: "var(--text-secondary)" }}>თანხა</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-900">
+                          <tbody className="divide-y" style={{ borderColor: "var(--bg-surface)" }}>
                             {waybillDetail.goods.map((item: any, i: number) => (
-                              <tr key={i} className="hover:bg-slate-900/50 transition-colors">
-                                <td className="px-6 py-4 text-xs text-slate-600 font-mono">{i + 1}</td>
+                              <tr key={i} className="transition-colors hover:bg-[var(--nav-hover-bg)]">
+                                <td className="px-6 py-4 text-xs font-mono" style={{ color: "var(--text-muted)" }}>{i + 1}</td>
                                 <td className="px-6 py-4">
-                                  <p className="text-xs text-slate-200 font-medium leading-tight">{item.W_NAME}</p>
+                                  <p className="text-xs font-medium leading-tight" style={{ color: "var(--text-primary)" }}>{item.W_NAME}</p>
                                 </td>
-                                <td className="px-6 py-4 text-center text-xs text-slate-500">{item.UNIT_NAME}</td>
-                                <td className="px-6 py-4 text-right text-xs text-slate-400 font-mono">{item.QUANTITY}</td>
-                                <td className="px-6 py-4 text-right text-xs text-slate-400 font-mono">{Number(item.PRICE).toFixed(2)}</td>
-                                <td className="px-6 py-4 text-right text-xs font-bold text-white font-mono">{Number(item.AMOUNT).toFixed(2)}</td>
+                                <td className="px-6 py-4 text-center text-xs" style={{ color: "var(--text-secondary)" }}>{item.UNIT_NAME}</td>
+                                <td className="px-6 py-4 text-right text-xs font-mono" style={{ color: "var(--text-secondary)" }}>{item.QUANTITY}</td>
+                                <td className="px-6 py-4 text-right text-xs font-mono" style={{ color: "var(--text-secondary)" }}>{Number(item.PRICE).toFixed(2)}</td>
+                                <td className="px-6 py-4 text-right text-xs font-bold font-mono" style={{ color: "var(--text-primary)" }}>{Number(item.AMOUNT).toFixed(2)}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -748,18 +860,21 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                     </div>
 
                     {/* Footer Summary */}
-                    <div className="p-8 bg-slate-800/20 rounded-3xl border border-slate-800/40 flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div 
+                      className="p-8 rounded-3xl border flex flex-col md:flex-row justify-between items-center gap-8"
+                      style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}
+                    >
                       <div className="flex-1">
                         {waybillDetail.waybill.COMMENT && (
                           <div className="space-y-2">
                             <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">კომენტარი</span>
-                            <p className="text-sm text-slate-400 italic leading-relaxed">"{waybillDetail.waybill.COMMENT}"</p>
+                            <p className="text-sm italic leading-relaxed" style={{ color: "var(--text-secondary)" }}>"{waybillDetail.waybill.COMMENT}"</p>
                           </div>
                         )}
                       </div>
                       <div className="text-center md:text-right min-w-[200px]">
-                        <span className="text-xs text-slate-500 font-bold uppercase tracking-widest block mb-2">სულ გადასახდელი</span>
-                        <p className="text-4xl font-black text-white tracking-tight">
+                        <span className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: "var(--text-secondary)" }}>სულ გადასახდელი</span>
+                        <p className="text-4xl font-black tracking-tight" style={{ color: "var(--text-primary)" }}>
                           {Number(waybillDetail.waybill.FULL_AMOUNT || 0).toFixed(2)} <span className="text-blue-500 text-2xl">₾</span>
                         </p>
                       </div>
@@ -767,8 +882,8 @@ export default function Waybills({ su, sp }: WaybillsProps) {
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20 gap-4">
-                    <XCircle className="w-16 h-16 text-slate-800" />
-                    <p className="text-slate-500 font-medium">მონაცემები ვერ ჩაიტვირთა</p>
+                    <XCircle className="w-16 h-16" style={{ color: "var(--border-default)" }} />
+                    <p className="font-medium" style={{ color: "var(--text-secondary)" }}>მონაცემები ვერ ჩაიტვირთა</p>
                   </div>
                 )}
               </div>

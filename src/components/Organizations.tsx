@@ -302,7 +302,8 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-rose-500/20 border border-rose-500/30 p-4 rounded-2xl flex items-center justify-between text-rose-400"
+            className="p-4 rounded-2xl flex items-center justify-between border"
+            style={{ backgroundColor: "rgba(244, 63, 94, 0.1)", borderColor: "rgba(244, 63, 94, 0.2)", color: "#f43f5e" }}
           >
             <div className="flex items-center gap-3">
               <WifiOff className="w-5 h-5" />
@@ -313,12 +314,18 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
       </div>
 
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-600/20">
+        <div 
+          className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
+          style={{ 
+            background: "linear-gradient(135deg, var(--bg-header-from), var(--bg-header-to))",
+            boxShadow: "0 8px 16px rgba(37, 99, 235, 0.2)"
+          }}
+        >
           <Building2 className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">ორგანიზაციების ძიება</h1>
-          <p className="text-slate-400 text-sm">TIN-ების გადამოწმება, Excel დამუშავება და ძებნა სახელით</p>
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>ორგანიზაციების ძიება</h1>
+          <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>TIN-ების გადამოწმება, Excel დამუშავება და ძებნა სახელით</p>
         </div>
       </div>
 
@@ -326,28 +333,35 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6"
+        className="rounded-2xl p-6 border shadow-xl space-y-6"
+        style={{ 
+          backgroundColor: "var(--bg-surface)", 
+          borderColor: "var(--border-default)",
+          boxShadow: "var(--shadow-card)"
+        }}
       >
         <div className="flex items-center gap-3">
-          <Search className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-lg font-bold text-white">ძებნა სახელით</h2>
+          <Search className="w-5 h-5 text-blue-500" />
+          <h2 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>ძებნა სახელით</h2>
         </div>
 
         <form onSubmit={searchOrgsByName} className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--text-muted)" }} />
             <input 
               type="text" 
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
               placeholder="ორგანიზაციის დასახელება..."
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+              className="w-full rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all border"
+              style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
             />
           </div>
           <button 
             type="submit"
             disabled={isSearchingOrgs || !nameInput.trim()}
-            className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20"
+            className="text-white px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-600/20 disabled:opacity-50"
+            style={{ background: "linear-gradient(135deg, var(--bg-header-from), var(--bg-header-to))" }}
           >
             {isSearchingOrgs ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
             ძებნა
@@ -355,33 +369,45 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
         </form>
 
         {searchNameError && (
-          <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-3 text-rose-400 text-sm">
+          <div 
+            className="p-4 border rounded-xl flex items-center gap-3 text-sm"
+            style={{ backgroundColor: "rgba(244, 63, 94, 0.1)", borderColor: "rgba(244, 63, 94, 0.2)", color: "#f43f5e" }}
+          >
             <AlertCircle className="w-4 h-4" />
             {searchNameError}
           </div>
         )}
 
         {orgsList.length > 0 && (
-          <div className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden">
+          <div 
+            className="rounded-xl border overflow-hidden"
+            style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-default)" }}
+          >
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-900 border-b border-slate-800">
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">TIN</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">დასახელება</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">მისამართი</th>
+                <tr className="border-b" style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>TIN</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>დასახელება</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>მისამართი</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-900">
+              <tbody className="divide-y" style={{ borderColor: "var(--border-default)" }}>
                 {orgsList.map((org, i) => (
-                  <tr key={i} className="hover:bg-slate-900/50 transition-colors">
+                  <tr 
+                    key={i} 
+                    className="transition-colors"
+                    style={{ backgroundColor: i % 2 === 0 ? "transparent" : "var(--bg-surface-2)" }}
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = "var(--nav-hover-bg)"}
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = i % 2 === 0 ? "transparent" : "var(--bg-surface-2)"}
+                  >
                     <td className="px-6 py-4">
-                      <span className="text-sm font-mono text-slate-300">{org.TIN}</span>
+                      <span className="text-sm font-mono" style={{ color: "var(--text-secondary)" }}>{org.TIN}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm font-bold text-white">{org.NAME}</span>
+                      <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{org.NAME}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-400">{org.ADDRESS}</span>
+                      <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{org.ADDRESS}</span>
                     </td>
                   </tr>
                 ))}
@@ -396,22 +422,33 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl"
+          className="rounded-2xl p-6 border shadow-xl transition-all"
+          style={{ 
+            backgroundColor: "var(--bg-surface)", 
+            borderColor: "var(--border-default)",
+            boxShadow: "var(--shadow-card)"
+          }}
         >
           <div className="flex items-center gap-3 mb-6">
-            <FileSpreadsheet className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-lg font-bold text-white">ფაილის ატვირთვა</h2>
+            <FileSpreadsheet className="w-5 h-5 text-indigo-500" />
+            <h2 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>ფაილის ატვირთვა</h2>
           </div>
 
           <div className="space-y-6">
-            <div className="relative p-8 border-2 border-dashed border-slate-800 rounded-2xl bg-slate-800/30 flex flex-col items-center justify-center text-center group hover:border-indigo-500/50 transition-all">
-              <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Upload className="w-6 h-6 text-slate-500 group-hover:text-indigo-400" />
+            <div 
+              className="relative p-8 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center text-center group hover:border-blue-500/50 transition-all"
+              style={{ backgroundColor: "rgba(59, 130, 246, 0.05)", borderColor: "var(--border-default)" }}
+            >
+              <div 
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-md"
+                style={{ backgroundColor: "var(--bg-surface)", color: "var(--text-muted)" }}
+              >
+                <Upload className="w-6 h-6 group-hover:text-blue-500 transition-colors" />
               </div>
-              <p className="text-sm text-slate-300 font-medium mb-1">
+              <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>
                 {file ? file.name : "ჩააგდეთ XLSX ფაილი ან დააჭირეთ ასარჩევად"}
               </p>
-              <p className="text-xs text-slate-500">TIN-ები უნდა იყოს A სვეტში</p>
+              <p className="text-xs" style={{ color: "var(--text-muted)" }}>TIN-ები უნდა იყოს A სვეტში</p>
               <input 
                 type="file" 
                 accept=".xlsx" 
@@ -421,7 +458,10 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
             </div>
 
             {excelError && (
-              <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-3 text-rose-400 text-sm">
+              <div 
+                className="p-4 border rounded-xl flex items-center gap-3 text-sm"
+                style={{ backgroundColor: "rgba(244, 63, 94, 0.1)", borderColor: "rgba(244, 63, 94, 0.2)", color: "#f43f5e" }}
+              >
                 <AlertCircle className="w-4 h-4" />
                 {excelError}
               </div>
@@ -430,19 +470,20 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
             {isProcessingExcel ? (
               <div style={{width: "100%"}}>
                 <div style={{
-                  background: "#1e293b",
-                  borderRadius: 8,
-                  height: 44,
+                  background: "var(--bg-surface-2)",
+                  borderRadius: 12,
+                  height: 48,
                   position: "relative",
-                  overflow: "hidden"
+                  overflow: "hidden",
+                  border: "1px solid var(--border-default)"
                 }}>
                   {/* შევსების ზოლი */}
                   <div style={{
                     position: "absolute",
                     left: 0, top: 0, bottom: 0,
                     width: `${progress}%`,
-                    background: "linear-gradient(90deg, #3b82f6, #6366f1)",
-                    borderRadius: 8,
+                    background: "linear-gradient(90deg, var(--bg-header-from), var(--bg-header-to))",
+                    borderRadius: 12,
                     transition: "width 0.3s ease"
                   }} />
                   {/* ტექსტი */}
@@ -453,9 +494,10 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
                     alignItems: "center",
                     justifyContent: "center",
                     color: "white",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     fontSize: 14,
-                    zIndex: 1
+                    zIndex: 1,
+                    textShadow: "0 1px 2px rgba(0,0,0,0.1)"
                   }}>
                     {progress < 100 
                       ? `მუშავდება... ${Math.round(progress)}%`
@@ -479,7 +521,8 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
                     setProgress(0);
                     setBatchResults([]);
                   }}
-                  className="px-4 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl border border-slate-700 transition-all"
+                  className="px-4 border transition-all rounded-xl hover:opacity-70"
+                  style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)", color: "var(--text-muted)" }}
                   title="თავიდან ატვირთვა"
                 >
                   <XCircle className="w-5 h-5" />
@@ -489,7 +532,8 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
               <button
                 onClick={() => processExcel()}
                 disabled={!file || isProcessingExcel}
-                className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20"
+                className="w-full text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 disabled:opacity-50"
+                style={{ background: "linear-gradient(135deg, var(--bg-header-from), var(--bg-header-to))" }}
               >
                 <FileSpreadsheet className="w-5 h-5" />
                 დამუშავება
@@ -503,20 +547,26 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl"
+          className="rounded-2xl p-6 border shadow-xl"
+          style={{ 
+            backgroundColor: "var(--bg-surface)", 
+            borderColor: "var(--border-default)",
+            boxShadow: "var(--shadow-card)"
+          }}
         >
           <div className="flex items-center gap-3 mb-6">
-            <Search className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-lg font-bold text-white">TIN-ით ძიება</h2>
+            <Search className="w-5 h-5 text-indigo-500" />
+            <h2 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>TIN-ით ძიება</h2>
           </div>
 
           <div className="space-y-6">
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">TIN-ები (თითო ხაზზე)</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: "var(--text-muted)" }}>TIN-ები (თითო ხაზზე)</label>
               <textarea 
                 value={tinInput}
                 onChange={(e) => setTinInput(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 px-4 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all h-32 resize-none font-mono text-sm"
+                className="w-full rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all h-32 resize-none font-mono text-sm border"
+                style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
                 placeholder="206322102&#10;404400000"
               />
             </div>
@@ -524,7 +574,8 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
             <button
               onClick={searchTins}
               disabled={!tinInput.trim() || isSearchingTins}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20"
+              className="w-full text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 disabled:opacity-50"
+              style={{ background: "linear-gradient(135deg, var(--bg-header-from), var(--bg-header-to))" }}
             >
               {isSearchingTins ? (
                 <>
@@ -547,41 +598,47 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl"
+          className="rounded-2xl overflow-hidden border shadow-xl"
+          style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-default)", boxShadow: "var(--shadow-card)" }}
         >
-          <div className="p-6 border-b border-slate-800">
-            <h3 className="text-lg font-bold text-white">TIN ძიების შედეგები</h3>
+          <div className="p-6 border-b" style={{ borderColor: "var(--border-default)" }}>
+            <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>TIN ძიების შედეგები</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-800/50 border-b border-slate-800">
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">TIN</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">დასახელება</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">მისამართი</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">დღგ</th>
+                <tr className="border-b" style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>TIN</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>დასახელება</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>მისამართი</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>დღგ</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
+              <tbody className="divide-y" style={{ borderColor: "var(--border-default)" }}>
                 {searchResults.map((res, i) => (
-                  <tr key={i} className="hover:bg-slate-800/50 transition-colors">
+                  <tr 
+                    key={i} 
+                    className="transition-colors"
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = "var(--nav-hover-bg)"}
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
+                  >
                     <td className="px-6 py-4">
-                      <span className="text-sm font-mono text-slate-300">{res.tin}</span>
+                      <span className="text-sm font-mono" style={{ color: "var(--text-secondary)" }}>{res.tin}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm font-bold text-white">{res.name}</span>
+                      <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{res.name}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-400">{res.address}</span>
+                      <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{res.address}</span>
                     </td>
                     <td className="px-6 py-4">
                       {res.isVatPayer ? (
-                        <span className="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
+                        <span className="flex items-center gap-1.5 text-emerald-500 text-xs font-bold">
                           <CheckCircle2 className="w-4 h-4" />
                           კი ✓
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1.5 text-rose-400 text-xs font-bold">
+                        <span className="flex items-center gap-1.5 text-rose-500 text-xs font-bold">
                           <XCircle className="w-4 h-4" />
                           არა ✗
                         </span>
@@ -600,42 +657,48 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl"
+          className="rounded-2xl overflow-hidden border shadow-xl"
+          style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-default)", boxShadow: "var(--shadow-card)" }}
         >
-          <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-            <h3 className="text-lg font-bold text-white">შედეგები რეალურ დროში</h3>
-            <span className="text-xs font-mono text-slate-500">{batchResults.length} / {total}</span>
+          <div className="p-6 border-b flex justify-between items-center" style={{ borderColor: "var(--border-default)" }}>
+            <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>შედეგები რეალურ დროში</h3>
+            <span className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>{batchResults.length} / {total}</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-800/50 border-b border-slate-800">
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">TIN</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">დასახელება</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">მისამართი</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">დღგ</th>
+                <tr className="border-b" style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>TIN</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>დასახელება</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>მისამართი</th>
+                  <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-secondary)" }}>დღგ</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
+              <tbody className="divide-y" style={{ borderColor: "var(--border-default)" }}>
                 {paginatedResults.map((res, i) => (
-                  <tr key={i} className="hover:bg-slate-800/50 transition-colors">
+                  <tr 
+                    key={i} 
+                    className="transition-colors"
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = "var(--nav-hover-bg)"}
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}
+                  >
                     <td className="px-6 py-4">
-                      <span className="text-sm font-mono text-slate-300">{res.tin}</span>
+                      <span className="text-sm font-mono" style={{ color: "var(--text-secondary)" }}>{res.tin}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm font-bold text-white">{res.name}</span>
+                      <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{res.name}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-400">{res.address}</span>
+                      <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{res.address}</span>
                     </td>
                     <td className="px-6 py-4">
                       {res.isVatPayer ? (
-                        <span className="flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
+                        <span className="flex items-center gap-1.5 text-emerald-500 text-xs font-bold">
                           <CheckCircle2 className="w-4 h-4" />
                           კი ✓
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1.5 text-rose-400 text-xs font-bold">
+                        <span className="flex items-center gap-1.5 text-rose-500 text-xs font-bold">
                           <XCircle className="w-4 h-4" />
                           არა ✗
                         </span>
@@ -648,13 +711,14 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
           </div>
 
           {/* Pagination Bar */}
-          <div className="p-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/50">
+          <div className="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4" style={{ backgroundColor: "var(--bg-surface-2)", borderColor: "var(--border-default)" }}>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">გვერდზე:</span>
+              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>გვერდზე:</span>
               <select 
                 value={pageSize}
                 onChange={e => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
-                className="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-sm text-white outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="rounded-lg px-2 py-1 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all border"
+                style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--border-default)", color: "var(--text-primary)" }}
               >
                 <option value={10}>10</option>
                 <option value={20}>20</option>
@@ -667,24 +731,26 @@ export default function Organizations({ su, sp }: OrganizationsProps) {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                className="text-sm font-bold text-slate-400 hover:text-white disabled:opacity-30 transition-colors"
+                className="text-sm font-bold transition-colors disabled:opacity-30"
+                style={{ color: "var(--text-secondary)" }}
               >
                 ← წინა
               </button>
-              <span className="text-sm font-bold text-white">
-                გვერდი {currentPage} / {totalPages || 1}
+              <span className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
+                გვერდი <span className="text-blue-500">{currentPage}</span> / {totalPages || 1}
               </span>
               <button
                 disabled={currentPage >= totalPages}
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                className="text-sm font-bold text-slate-400 hover:text-white disabled:opacity-30 transition-colors"
+                className="text-sm font-bold transition-colors disabled:opacity-30"
+                style={{ color: "var(--text-secondary)" }}
               >
                 შემდეგი →
               </button>
             </div>
 
-            <div className="text-sm font-bold text-slate-500">
-              სულ: {batchResults.length} შედეგი
+            <div className="text-sm font-bold" style={{ color: "var(--text-muted)" }}>
+              სულ: <span style={{ color: "var(--text-primary)" }}>{batchResults.length}</span> შედეგი
             </div>
           </div>
         </motion.div>

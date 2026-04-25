@@ -163,6 +163,38 @@ app.post("/api/check-user", async (req: any, res: any) => {
   }
 });
 
+// ========== EAPI ვალიდაციის ტესტი (მთავარი RS user-ისთვის) ==========
+app.post("/api/check-user-eapi", async (req: any, res: any) => {
+  const { su, sp } = req.body;
+  if (!su || !sp) return res.status(400).json({ error: "su და sp სავალდებულოა" });
+
+  try {
+    const resp = await axios.post(
+      "https://eapi.rs.ge/Users/Authenticate",
+      {
+        AUTH_TYPE: 0,
+        DEVICE_CODE: null,
+        USERNAME: su,
+        PASSWORD: sp
+      },
+      { validateStatus: () => true }
+    );
+
+    console.log("EAPI Auth status:", resp.status);
+    console.log("EAPI Auth response:", JSON.stringify(resp.data));
+
+    const token = resp.data?.DATA?.ACCESS_TOKEN;
+    if (token) {
+      res.json({ ok: true, valid: true, message: "EAPI ცნობს ამ user-ს" });
+    } else {
+      res.json({ ok: true, valid: false, response: resp.data });
+    }
+  } catch (e: any) {
+    console.error("EAPI test error:", e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ========== ზედნადებების სია ==========
 app.post("/api/waybills", async (req: any, res: any) => {
   const { su, sp, startDate, endDate, startRowIndex, type, statuses, carNumber, waybillNumber } = req.body;

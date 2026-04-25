@@ -5,8 +5,54 @@
   --font-sans: "Noto Sans Georgian", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Light theme (default) */
+:root {
+  --bg-page: #F5F7FA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-2: #F8FAFC;
+  --bg-sidebar: #FFFFFF;
+  --bg-header-from: #1E88E5;
+  --bg-header-to: #1565C0;
+  --border-default: #E5E7EB;
+  --border-strong: #D1D5DB;
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --nav-active-bg: #EFF6FF;
+  --nav-active-text: #1E88E5;
+  --nav-hover-bg: #F1F5F9;
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-card-hover: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --bg-page: #0F172A;
+  --bg-surface: #1E293B;
+  --bg-surface-2: #0F172A;
+  --bg-sidebar: #0F172A;
+  --bg-header-from: #1E3A8A;
+  --bg-header-to: #1E40AF;
+  --border-default: #334155;
+  --border-strong: #475569;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --nav-active-bg: rgba(59, 130, 246, 0.15);
+  --nav-active-text: #60A5FA;
+  --nav-hover-bg: rgba(255, 255, 255, 0.05);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+  --shadow-card-hover: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+  color-scheme: dark;
+}
+
 body {
-  background-color: #0f172a;
-  color: #f8fafc;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   font-family: "Noto Sans Georgian", sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+* {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
